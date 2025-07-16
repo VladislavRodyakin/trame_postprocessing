@@ -26,6 +26,7 @@ state.table_data = []
 state.headers = []
 state.files_key = 0  # ключ для форс-обновления дерева
 
+
 # === Функция для загрузки данных из CSV ===
 def load_csv_content(content):
     reader = csv.DictReader(io.StringIO(content), delimiter=';')
@@ -35,6 +36,7 @@ def load_csv_content(content):
 
 # Обработчик выбора элемента в дереве
 def on_tree_select(items):
+    """Вызывается при выборе элемента в дереве"""
     if items and len(items) > 0:
         item = items[0]
         if item and item.get('type') == 'file':
@@ -44,7 +46,8 @@ def on_tree_select(items):
                     data, headers = load_csv_content(item['content'])
                     state.table_data = data
                     state.headers = headers
-                except Exception:
+                except Exception as e:
+#                     print(f"Ошибка разбора CSV: {e}")
                     state.table_data = []
                     state.headers = []
             else:
@@ -66,7 +69,9 @@ def on_add_file():
         file_info = file_info[0]
     # Проверка на наличие контента
     if 'content' not in file_info:
+#         print("Ошибка: файл не содержит контента")
         return
+    
     new_file = {
         'id': str(uuid.uuid4()),
         'name': file_info['name'],
@@ -74,6 +79,7 @@ def on_add_file():
         'icon': 'mdi-file-document',
         'content': file_info['content'].decode('cp1251', errors='replace')
     }
+    # Создаем полностью новую структуру данных
     new_files = state.files.copy()
     root = {**new_files[0]}
     new_children = root['children'].copy()
