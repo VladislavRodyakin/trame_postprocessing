@@ -24,6 +24,8 @@ state.selected_file = None
 state.active_file = None
 state.table_data = []
 state.headers = []
+state.files_key = 0  # ключ для форс-обновления дерева
+
 
 # === Функция для загрузки данных из CSV ===
 def load_csv_content(content):
@@ -45,13 +47,14 @@ def on_tree_select(items):
                     state.table_data = data
                     state.headers = headers
                 except Exception as e:
-                    print(f"Ошибка разбора CSV: {e}")
+#                     print(f"Ошибка разбора CSV: {e}")
                     state.table_data = []
                     state.headers = []
             else:
                 # Для не-CSV файлов очищаем таблицу
                 state.table_data = []
                 state.headers = []
+        state.active_file = item
     else:
         state.active_file = None
         state.table_data = []
@@ -64,10 +67,9 @@ def on_add_file():
         return
     if isinstance(file_info, list):
         file_info = file_info[0]
-    
     # Проверка на наличие контента
     if 'content' not in file_info:
-        print("Ошибка: файл не содержит контента")
+#         print("Ошибка: файл не содержит контента")
         return
     
     new_file = {
@@ -77,7 +79,6 @@ def on_add_file():
         'icon': 'mdi-file-document',
         'content': file_info['content'].decode('cp1251', errors='replace')
     }
-    
     # Создаем полностью новую структуру данных
     new_files = state.files.copy()
     root = {**new_files[0]}
@@ -85,14 +86,35 @@ def on_add_file():
     new_children.append(new_file)
     root['children'] = new_children
     new_files[0] = root
-    
-    # Обновляем состояние
     state.files = new_files
     state.selected_file = None
+    if state.files_key is None:
+        state.files_key = 1
+    else:
+        state.files_key += 1
+
+# Удаление выбранного файла из дерева
+def on_delete_file():
+    if not state.active_file or state.active_file.get('type') != 'file':
+        return
+    if not state.files or not state.files[0] or 'children' not in state.files[0]:
+        return
+    file_id = state.active_file['id']
+    new_children = [child for child in state.files[0]['children'] if child['id'] != file_id]
+    updated_folder = {**state.files[0], 'children': new_children}
+    state.files = [updated_folder]
+    state.active_file = None
+    state.table_data = []
+    state.headers = []
+    if state.files_key is None:
+        state.files_key = 1
+    else:
+        state.files_key += 1
 
 # Явно регистрируем функции в контроллере
 ctrl.on_add_file = on_add_file
 ctrl.on_tree_select = on_tree_select
+ctrl.on_delete_file = on_delete_file
 
 with SinglePageLayout(server) as layout:
     layout.title.set_text("Авиарасчеты")
@@ -110,7 +132,6 @@ with SinglePageLayout(server) as layout:
                                 hide_details=True,
                                 accept="*",
                                 multiple=False,
-                                change=("selected_file = $event",)
                             )
                             vuetify.VBtn(
                                 "Добавить файл",
@@ -131,10 +152,18 @@ with SinglePageLayout(server) as layout:
                                 item_children="children",
                                 v_model=("active_file", None),
                                 open_all=True,
-                                key=("files_key", len(state.files[0]['children'])),
+                                key=("files_key", "files_key"),
                                 update_active=(ctrl.on_tree_select, "[$event]")
                             )
-                
+                            vuetify.VBtn(
+                                v_if=("active_file && active_file.type === 'file'",),
+                                color="error",
+                                classes="ma-2",
+                                click=ctrl.on_delete_file,
+                                children=[
+                                    vuetify.VIcon("mdi-delete", color="white"),
+                                ]
+                            )
                 # Правая панель - таблица
                 with vuetify.VCol(cols=8, classes="pa-0"):
                     with vuetify.VCard(style="height: 350px; margin-top: 300px;", classes="elevation-2 d-flex flex-column"):
@@ -151,7 +180,6 @@ with SinglePageLayout(server) as layout:
                                 density="compact",
                                 items_per_page=-1,
                             )
-
 
 if __name__ == "__main__":
     server.start()
