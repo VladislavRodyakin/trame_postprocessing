@@ -8,7 +8,7 @@ from vtkmodules.vtkIOLegacy import vtkUnstructuredGridReader
 #     headers = [{"text": k, "value": k} for k in data[0].keys()] if data else []
 #     return data, headers
 
-def load_vtk_content(content):
+def load_vtk_content(content, file_path):
     reader = vtkUnstructuredGridReader()
     reader.SetFileName(file_path)
     reader.Update()

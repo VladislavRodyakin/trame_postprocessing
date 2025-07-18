@@ -25,16 +25,28 @@ def standard_buttons():
     with vuetify.VBtn(icon=True, click="$refs.view.resetCamera()"):
         vuetify.VIcon("mdi-crop-free")
 
-def pipeline_widget():
-    """Виджет для отображения pipeline"""
+def actives_change(state, ids):
+    _id = ids[0]
+    state.selected_file = _id
+
+
+def pipeline_widget(state):
+    def handler(ids):
+        actives_change(state, ids)
+
     trame.GitTree(
-        sources=(
-            "pipeline",
-            [
-                {"id": "1", "parent": "0", "visible": 1, "name": "Mesh"},
-            ],
-        ),
+        sources=("pipeline", state.files),
+        # actives_change=(handler, "[$event]"),
+        open=True, 
     )
+    # trame.GitTree(
+    #     sources=(
+    #         "pipeline",
+    #         [
+    #             {"id": "1", "parent": "0", "visible": 1, "name": "Mesh"},
+    #         ],
+    #     ),
+    # )
 
 def mesh_card():
     """Карточка управления параметрами меша"""
@@ -115,6 +127,8 @@ def mesh_card():
                         v_show="array_list[mesh_color_array_idx].n_components > 1",
                     )
 
+# from logic.delete_file import delete_file_from_tree
+
 def left_panel(state, ctrl):
     with vuetify.VCard(height="100%", classes="elevation-2 d-flex flex-column"):
                         with vuetify.VCardTitle("Шаг 1"):
@@ -127,24 +141,34 @@ def left_panel(state, ctrl):
                                 accept="*",
                                 multiple=False
                             )
+
+                            # vuetify.VBtn(
+                            #     "Delete",
+                            #     color="error",
+                            #     icon="mdi-delete",
+                            #     classes="ma-2",
+                            #     v_model=("selected_file",),
+                            #     click=delete_file_from_tree(state)
+                            # )
                             
                         vuetify.VDivider(classes="my-2")
 
-                        with vuetify.VCardText(style="overflow-y: auto; flex-grow: 1;"):
-                            vuetify.VTreeview(
-                                items=("files",),
-                                activatable=True,
-                                open_on_click=True,
-                                dense=True,
-                                return_object=True,
-                                item_key="id",
-                                item_text="name",
-                                item_children="children",
-                                v_model=("active_file", None),
-                                open_all=True,
-                                key=("files_key"),
-                                update_active=(ctrl.on_tree_select, "[$event]")
-                            )
+                        # with vuetify.VCardText(style="overflow-y: auto; flex-grow: 1;"):
+                            # vuetify.VTreeview(
+                            #     items=("files",),
+                            #     activatable=True,
+                            #     open_on_click=True,
+                            #     dense=True,
+                            #     return_object=True,
+                            #     item_key="id",
+                            #     item_text="name",
+                            #     item_children="children",
+                            #     v_model=("active_file", None),
+                            #     open_all=True,
+                            #     key=("files_key"),
+                            #     update_active=(ctrl.on_tree_select, "[$event]")
+                            # )
+
 
 
 def build_layout(server):
@@ -161,7 +185,7 @@ def build_layout(server):
         
         with layout.drawer as drawer:
             drawer.width = '25%'
-            pipeline_widget()
+            pipeline_widget(state)
             vuetify.VDivider(classes="mb-2")
             mesh_card()
             left_panel(state, ctrl)

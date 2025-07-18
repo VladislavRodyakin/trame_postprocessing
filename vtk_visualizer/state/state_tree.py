@@ -7,15 +7,9 @@ from logic.tree_selection import handle_tree_selection
 def setup_tree_state_and_controllers(state, ctrl):
     state.files = [
         {
-            'id': 'root',
-            'name': 'Главная папка',
-            'type': 'folder',
-            'icon': 'mdi-folder',
-            'children': [],
-            'open': True
         }
     ]
-    
+    state.open_nodes = []
     state.files_key = 0
     state.selected_file = None
     state.active_file = None

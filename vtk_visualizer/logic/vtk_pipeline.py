@@ -30,7 +30,9 @@ def setup_vtk_pipeline():
     renderWindowInteractor.SetRenderWindow(renderWindow)
     
     # Чтение VTK файла
+
     file_path = os.path.join(current_directory, "results_1.vtk")
+
     
     reader = vtkUnstructuredGridReader()
     reader.SetFileName(file_path)
