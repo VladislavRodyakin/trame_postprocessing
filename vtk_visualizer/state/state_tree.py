@@ -23,7 +23,7 @@ def setup_tree_state_and_controllers(state, ctrl):
     state.headers = []
 
     ctrl.on_add_file = lambda: add_file_to_tree(state)
-    ctrl.on_tree_select = lambda items: handle_tree_selection(items, state)
+    ctrl.on_tree_select = lambda items: handle_tree_selection(items, state, ctrl)
     ctrl.on_delete_file = lambda: delete_file_from_tree(state)
 
     @state.change("selected_file")

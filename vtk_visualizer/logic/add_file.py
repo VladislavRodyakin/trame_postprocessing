@@ -2,6 +2,7 @@ import uuid
 
 def add_file_to_tree(state):
     file_info = state.selected_file
+    # print(state.file_path)
     print("Добавление файла:", file_info)  # Для отладки
     if not file_info:
         return

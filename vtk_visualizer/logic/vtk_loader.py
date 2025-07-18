@@ -10,7 +10,9 @@ def load_vtk_content(content):
     
     reader = vtkUnstructuredGridReader() 
     # reader.SetFileName(file_path) # TODO try changing to SetInputString
-    reader.SetInputString(io.StringIO(content))
+    # print(content)
+    reader.SetInputString(content)
+    # reader.SetInputString(io.StringIO(content))
     reader.Update()
     
     # Извлечение информации о массивах данных

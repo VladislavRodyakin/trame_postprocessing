@@ -5,6 +5,7 @@ from state.store import setup_state_and_controllers
 server = get_server(client_type="vue2")
 state, ctrl = server.state, server.controller
 setup_state_and_controllers(state, ctrl)
+# server.hot_reload = True
 
 build_layout(server)
 

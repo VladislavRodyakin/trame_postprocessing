@@ -2,10 +2,13 @@ from logic.vtk_pipeline import setup_vtk_pipeline
 from logic.mesh_controls import setup_mesh_controls
 from logic.color_controls import setup_color_controls
 from logic.view_controls import setup_view_controls
+# from trame.decorators import hot_reload
 
-def setup_3D_state_and_controllers(state, ctrl):
+# @hot_reload
+def setup_3D_state_and_controllers(state, ctrl, content=None):
+    # print(content)
     # Инициализация VTK pipeline
-    renderer, renderWindow, renderWindowInteractor, reader, dataset_arrays = setup_vtk_pipeline()
+    renderer, renderWindow, renderWindowInteractor, reader, dataset_arrays = setup_vtk_pipeline(content)
     
     # Состояние для отображения
     state.cube_axes_visibility = True
@@ -46,15 +49,15 @@ def setup_3D_state_and_controllers(state, ctrl):
 
 # TODO Этот блок выдаёт некритичные для работы ошибки
 # Error: Skip state value for 'vtk_renderer' since its content is not serializable
-    state.vtk_renderer = renderer
+    # state.vtk_renderer = renderer
     state.vtk_renderWindow = renderWindow
-    state.vtk_renderWindowInteractor = renderWindowInteractor
-    state.vtk_reader = reader
+    # state.vtk_renderWindowInteractor = renderWindowInteractor
+    # state.vtk_reader = reader
 
 
     state.vtk_dataset_arrays = dataset_arrays
-    
+
     # Настройка контроллеров
     setup_mesh_controls(state, ctrl, renderer, renderWindow, renderWindowInteractor, reader, dataset_arrays)
     setup_color_controls(state, ctrl, renderer, renderWindow, renderWindowInteractor, reader, dataset_arrays)
-    setup_view_controls(state, ctrl, renderer, renderWindow, renderWindowInteractor) 
+    setup_view_controls(state, ctrl, renderer, renderWindow, renderWindowInteractor)

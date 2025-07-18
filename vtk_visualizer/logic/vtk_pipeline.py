@@ -12,7 +12,10 @@ from vtkmodules.vtkRenderingAnnotation import vtkCubeAxesActor
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleSwitch
 import vtkmodules.vtkRenderingOpenGL2
 
-def setup_vtk_pipeline():
+
+
+#TODO need to get the filepath from file uploader
+def setup_vtk_pipeline(content=None):
     """Инициализация VTK pipeline"""
     
     # Получение абсолютного пути к текущей директории
@@ -30,10 +33,14 @@ def setup_vtk_pipeline():
     renderWindowInteractor.SetRenderWindow(renderWindow)
     
     # Чтение VTK файла
-    file_path = os.path.join(current_directory, "results_1.vtk")
 
     reader = vtkUnstructuredGridReader()
-    reader.SetFileName(file_path)
+    if content is None:
+        file_path = os.path.join(current_directory, "results_1.vtk")
+        reader.SetFileName(file_path)
+    else:
+        # reader.SetInputString(content)
+        reader.SetInputString(content)
     reader.Update()
     
     # Извлечение информации о массивах данных
@@ -99,23 +106,42 @@ def setup_vtk_pipeline():
     
     return renderer, renderWindow, renderWindowInteractor, reader, dataset_arrays 
 
-#  TODO working on it
-# def update_vtk_pipeline(reader, dataset_arrays):
-#     """Обновление VTK pipeline"""
 
-#     # Обновление меша
-#     mesh_mapper = reader.GetOutputPort()
-#     mesh_actor.SetMapper(mesh_mapper)
+def update_vtk_pipeline(renderer):
+    """Обновление VTK pipeline"""
 
-#     # Обновление координатных осей
-#     cube_axes = reader.GetOutputPort()
-#     cube_axes.SetCamera(renderer.GetActiveCamera())
-#     cube_axes.SetXLabelFormat("%6.1f")
-#     cube_axes.SetYLabelFormat("%6.1f")
-#     cube_axes.SetZLabelFormat("%6.1f")
-#     cube_axes.SetFlyModeToOuterEdges()
+    #TODO DropActors
 
-#     # Сброс камеры
-#     renderer.ResetCamera()
-
-#     return renderer, renderWindow, renderWindowInteractor, reader, dataset_arrays
+    # Создание меша
+    # mesh_mapper = vtkDataSetMapper()
+    # mesh_mapper.SetInputConnection(reader.GetOutputPort())
+    
+    # mesh_actor = vtkActor()
+    # mesh_actor.SetMapper(mesh_mapper)
+    # renderer.AddActor(mesh_actor)
+    print(renderer)
+    print(renderer.GetActors())
+    
+    # Настройка отображения по умолчанию
+    # mesh_actor.GetProperty().SetRepresentationToSurface()
+    # mesh_actor.GetProperty().SetPointSize(1)
+    # mesh_actor.GetProperty().EdgeVisibilityOff()
+    # mesh_actor.GetProperty().SetColor(0.7, 0.7, 0.7)
+    # mesh_mapper.SetScalarVisibility(False)
+    
+    # TODO не требуется
+    # # Создание координатных осей
+    # cube_axes = vtkCubeAxesActor()
+    # renderer.AddActor(cube_axes)
+    
+    # cube_axes.SetBounds(mesh_actor.GetBounds())
+    # cube_axes.SetCamera(renderer.GetActiveCamera())
+    # cube_axes.SetXLabelFormat("%6.1f")
+    # cube_axes.SetYLabelFormat("%6.1f")
+    # cube_axes.SetZLabelFormat("%6.1f")
+    # cube_axes.SetFlyModeToOuterEdges()
+    
+    # Сброс камеры
+    renderer.ResetCamera()
+    
+    # return renderer, renderWindow, renderWindowInteractor, reader, dataset_arrays 
