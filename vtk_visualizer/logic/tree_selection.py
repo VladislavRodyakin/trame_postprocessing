@@ -1,4 +1,5 @@
 from logic.csv_loader import load_csv_content
+from logic.vtk_loader import load_vtk_content
 
 def handle_tree_selection(items, state):
     if items:
@@ -14,6 +15,18 @@ def handle_tree_selection(items, state):
                     print(f"Ошибка загрузки CSV: {e}")
                     state.table_data = []
                     state.headers = []
+            elif item['name'].lower().endswith('.vtk'):
+                previous_vtk_reader = state.vtk_reader
+                previous_vtk_dataset_arrays = state.dataset_arrays
+                try:
+                    reader, dataset_arrays = load_vtk_content(item['content'])
+                    state.vtk_reader = reader
+                    state.vtk_dataset_arrays = dataset_arrays
+                    # TODO вызвать обновление визуализации
+                except Exception as e:
+                    print(f"Ошибка загрузки CSV: {e}")
+                    state.vtk_reader = previous_vtk_reader
+                    state.vtk_dataset_arrays = previous_vtk_dataset_arrays
             else:
                 state.table_data = []
                 state.headers = []

@@ -145,6 +145,15 @@ def left_panel(state, ctrl):
                                 key=("files_key"),
                                 update_active=(ctrl.on_tree_select, "[$event]")
                             )
+                            vuetify.VBtn(
+                                v_if=("active_file && active_file.type === 'file'",),
+                                color="error",
+                                classes="ma-2",
+                                click=ctrl.on_delete_file,
+                                children=[
+                                    vuetify.VIcon("mdi-delete", color="white"),
+                                ]
+                            )
 
 
 def build_layout(server):

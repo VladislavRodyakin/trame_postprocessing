@@ -31,7 +31,7 @@ def setup_vtk_pipeline():
     
     # Чтение VTK файла
     file_path = os.path.join(current_directory, "results_1.vtk")
-    
+
     reader = vtkUnstructuredGridReader()
     reader.SetFileName(file_path)
     reader.Update()
@@ -98,3 +98,24 @@ def setup_vtk_pipeline():
     renderer.ResetCamera()
     
     return renderer, renderWindow, renderWindowInteractor, reader, dataset_arrays 
+
+#  TODO working on it
+# def update_vtk_pipeline(reader, dataset_arrays):
+#     """Обновление VTK pipeline"""
+
+#     # Обновление меша
+#     mesh_mapper = reader.GetOutputPort()
+#     mesh_actor.SetMapper(mesh_mapper)
+
+#     # Обновление координатных осей
+#     cube_axes = reader.GetOutputPort()
+#     cube_axes.SetCamera(renderer.GetActiveCamera())
+#     cube_axes.SetXLabelFormat("%6.1f")
+#     cube_axes.SetYLabelFormat("%6.1f")
+#     cube_axes.SetZLabelFormat("%6.1f")
+#     cube_axes.SetFlyModeToOuterEdges()
+
+#     # Сброс камеры
+#     renderer.ResetCamera()
+
+#     return renderer, renderWindow, renderWindowInteractor, reader, dataset_arrays

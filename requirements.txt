@@ -1,3 +1,4 @@
 trame
 trame-vuetify
 trame-vtk
+vtk-module
